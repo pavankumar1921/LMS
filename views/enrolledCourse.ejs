@@ -1,0 +1,39 @@
+<% try { %>
+  <% course.forEach(function(course) { %>
+    <% const isEnrolled = enrolledCourses && enrolledCourses.some(enrollment => enrollment.courseId === course.id && enrollment.enrollmentStatus === true); %>
+    <% if (isEnrolled) { %>
+      <div class="course-card">
+        <h2><%= course.title %></h2>
+        <p>Course ID: <%= course.id %></p>
+        <p>Educator: <%= course.educatorName %></p>
+        <span class="enrolled">Enrolled</span>
+        <a href="/course/<%= course.id %>" class="button blue">View</a>
+        
+        <% if (chapter && chapter.length > 0) { %>
+          <% const chaptersForCourse = chapter.filter(ch => ch.dataValues.courseId === course.id); %>
+          <% const pagesForCourse = progressStatus.filter(page => chaptersForCourse.some(ch => ch.dataValues.id === page.dataValues.chapterId)); %>
+          <br>
+          <% const totalPagesForCourse = pagesForCourse.length; %>
+          <span>Total Pages in Course ID <%= course.id %>: <%= totalPagesForCourse %></span>
+          
+          <% let completedPagesCount = 0; %>
+          <% pagesForCourse.forEach(function(page) { %>
+            <% if (page.dataValues.isComplete === true) { %>
+              <% completedPagesCount++; %>
+            <% } %>
+          <% }); %>
+          <br>
+          <span>Completed Pages in Chapter: <%= completedPagesCount %></span>
+          <br>
+          <% if (totalPagesForCourse > 0) { %>
+            <% const completionPercentage = (completedPagesCount / totalPagesForCourse) * 100; %>
+            <span>Completion Percentage in Chapter: <%= completionPercentage.toFixed(2) %>%</span>
+          <% } %>
+        <% } %>
+        
+      </div>
+    <% } %>
+  <% }); %>
+<% } catch (error) { %>
+  <p>Error: <%= error.message %></p>
+<% } %>
